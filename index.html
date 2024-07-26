@@ -8,17 +8,73 @@
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .dashboard { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .metric-card { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        .chart { height: 300px; margin-bottom: 20px; }
+    </style>
 </head>
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        // Paste your React component code here
-        // Make sure to remove any import statements and export default
+        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
         
+        const data = [
+            { month: 'Aug 2023', weight: 223, bodyFat: 31, heartRate: 77, waistHip: 1.06, bmi: 31.99, stepTest: 154, pushUps: 31 },
+            { month: 'Sep 2023', weight: 226, bodyFat: 29, heartRate: 55, waistHip: 1.02, bmi: 32.42, stepTest: 129, pushUps: 31 },
+            { month: 'Nov 2023', weight: 226, bodyFat: 28, heartRate: 67, waistHip: 1.02, bmi: 32.42, stepTest: 119, pushUps: 60 },
+            { month: 'Dec 2023', weight: 220, bodyFat: 29, heartRate: 63, waistHip: 0.84, bmi: 31.56, stepTest: 129, pushUps: 53 },
+            { month: 'Feb 2024', weight: 223, bodyFat: 25, heartRate: 73, waistHip: 0.88, bmi: 31.77, stepTest: 124, pushUps: 50 },
+            { month: 'Mar 2024', weight: 223, bodyFat: 25, heartRate: 73, waistHip: 0.88, bmi: 31.77, stepTest: 124, pushUps: 50 },
+            { month: 'May 2024', weight: 209, bodyFat: 25, heartRate: 65, waistHip: 0.89, bmi: 29.77, stepTest: 148, pushUps: 29 },
+        ];
+
+        const MetricCard = ({ title, value, unit }) => (
+            <div className="metric-card">
+                <h3>{title}</h3>
+                <p>{value} {unit}</p>
+            </div>
+        );
+
+        const MetricChart = ({ dataKey, name, color }) => (
+            <div className="chart">
+                <h3>{name}</h3>
+                <ResponsiveContainer width="100%" height={200}>
+                    <LineChart data={data}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey={dataKey} stroke={color} name={name} />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
+        );
+
         const FitnessProgressDashboard = () => {
-            // Your component code goes here
+            const latestData = data[data.length - 1];
+
+            return (
+                <div className="dashboard">
+                    <h1>Fitness Progress Dashboard</h1>
+                    
+                    <div>
+                        <MetricCard title="Current Weight" value={latestData.weight} unit="lbs" />
+                        <MetricCard title="Body Fat %" value={latestData.bodyFat} unit="%" />
+                        <MetricCard title="Current BMI" value={latestData.bmi.toFixed(2)} unit="" />
+                    </div>
+
+                    <MetricChart dataKey="weight" name="Weight" color="#8884d8" />
+                    <MetricChart dataKey="bodyFat" name="Body Fat" color="#82ca9d" />
+                    <MetricChart dataKey="bmi" name="BMI" color="#ffc658" />
+                    <MetricChart dataKey="heartRate" name="Resting Heart Rate" color="#ff8042" />
+                    <MetricChart dataKey="waistHip" name="Waist to Hip Ratio" color="#8884d8" />
+                    <MetricChart dataKey="stepTest" name="Step Test" color="#82ca9d" />
+                    <MetricChart dataKey="pushUps" name="Push-Ups" color="#ffc658" />
+                </div>
+            );
         };
 
         ReactDOM.render(<FitnessProgressDashboard />, document.getElementById('root'));
